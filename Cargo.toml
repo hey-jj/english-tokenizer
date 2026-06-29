@@ -2,9 +2,20 @@
 name = "english-tokenizer"
 version = "0.1.0"
 edition = "2021"
-description = "multilingual regex pretokenizer that type-tags each token (word/number/emoji/url/email/hashtag/menti"
+description = "Regex-driven tokenizer that splits a sentence and type-tags each token (word, number, emoji, url, email, hashtag, mention, time, currency, and more)."
 license = "MIT"
 repository = "https://github.com/hey-jj/english-tokenizer"
 readme = "README.md"
+keywords = ["tokenizer", "nlp", "text", "tagging", "unicode"]
+categories = ["text-processing"]
 
 [dependencies]
+# The whole tokenizer is a set of ordered regexes applied with match-and-split.
+# The regex crate gives us Unicode aware matching with the exact class and
+# alternation semantics the token rules depend on.
+regex = "1"
+
+[dev-dependencies]
+# Golden cases are stored as JSON and loaded at test time.
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
