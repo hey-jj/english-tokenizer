@@ -131,11 +131,7 @@ fn leading_whitespace_yields_empty_alien_with_empty_config() {
     tk.define_config(&[]);
     assert_eq!(
         pairs(&mut tk, "  a b"),
-        vec![
-            tok("", "alien"),
-            tok("a", "alien"),
-            tok("b", "alien"),
-        ]
+        vec![tok("", "alien"), tok("a", "alien"), tok("b", "alien"),]
     );
     // No leading space, so no empty token.
     assert_eq!(
