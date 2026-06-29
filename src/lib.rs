@@ -163,7 +163,8 @@ impl Tokenizer {
     pub fn new() -> Self {
         let master = patterns::master();
         let mut tk = Tokenizer {
-            rgxs: master.clone(),
+            // `define_config` below fills this from `master`.
+            rgxs: Vec::new(),
             master,
             final_tokens: Vec::new(),
             fingerprint_codes: default_fingerprint_codes(),
@@ -191,9 +192,14 @@ impl Tokenizer {
     /// assert_eq!(tokens[0].tag, "time");
     /// ```
     pub fn tokenize(&mut self, sentence: &str) -> Vec<Token> {
-        self.final_tokens = Vec::new();
-        let rules = self.rgxs.clone();
+        self.final_tokens.clear();
+        // Move the rules out so `tokenize_recursive` can borrow them while it
+        // also holds `&mut self`. Put them back when the recursion returns.
+        let rules = std::mem::take(&mut self.rgxs);
         self.tokenize_recursive(sentence, &rules);
+        self.rgxs = rules;
+        // Keep `final_tokens` for the next `get_tokens_fp` call. The clone here
+        // is the tokens only, not the compiled rule set.
         self.final_tokens.clone()
     }
 
