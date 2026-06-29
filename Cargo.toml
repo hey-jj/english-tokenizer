@@ -1,0 +1,10 @@
+[package]
+name = "english-tokenizer"
+version = "0.1.0"
+edition = "2021"
+description = "multilingual regex pretokenizer that type-tags each token (word/number/emoji/url/email/hashtag/menti"
+license = "MIT"
+repository = "https://github.com/hey-jj/english-tokenizer"
+readme = "README.md"
+
+[dependencies]
