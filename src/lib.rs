@@ -66,20 +66,27 @@ impl Token {
 /// Error returned when a tag or regex cannot be added.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum AddError {
-    /// A new tag was needed but no fingerprint code was given.
-    ///
-    /// The string is the full message, matching the wording callers expect.
-    MissingFingerprint(String),
-    /// The tag already exists.
-    ///
-    /// The string is the full message.
-    TagExists(String),
+    /// A new tag was needed but no fingerprint code was given. `tag` is the name
+    /// the caller tried to add.
+    MissingFingerprint {
+        /// The tag the caller tried to add.
+        tag: String,
+    },
+    /// The tag already exists. `tag` is the name the caller tried to add.
+    TagExists {
+        /// The tag the caller tried to add.
+        tag: String,
+    },
 }
 
 impl std::fmt::Display for AddError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            AddError::MissingFingerprint(m) | AddError::TagExists(m) => f.write_str(m),
+            AddError::MissingFingerprint { tag } => write!(
+                f,
+                "Tag {tag} doesn't exist; Provide a 'fingerprintCode' to add it as a tag."
+            ),
+            AddError::TagExists { tag } => write!(f, "Tag {tag} already exists"),
         }
     }
 }
@@ -296,13 +303,16 @@ impl Tokenizer {
         fingerprint_code: Option<&str>,
     ) -> Result<(), AddError> {
         let known = self.has_code(tag);
-        if !known && fingerprint_code.is_none() {
-            return Err(AddError::MissingFingerprint(format!(
-                "Tag {tag} doesn't exist; Provide a 'fingerprintCode' to add it as a tag."
-            )));
+        // An empty code counts as no code, matching `has_code`. A new tag needs
+        // a non-empty code to register.
+        let code_present = fingerprint_code.is_some_and(|c| !c.is_empty());
+        if !known && !code_present {
+            return Err(AddError::MissingFingerprint {
+                tag: tag.to_string(),
+            });
         }
         if !known {
-            // Safe to unwrap: the guard above ensures a code is present.
+            // Safe to unwrap: the guard above ensures a non-empty code is present.
             self.add_tag(tag, fingerprint_code.expect("checked above"))?;
         }
         self.rgxs.insert(
@@ -322,7 +332,9 @@ impl Tokenizer {
     /// Returns [`AddError::TagExists`] when `name` already has a code.
     pub fn add_tag(&mut self, name: &str, fingerprint_code: &str) -> Result<(), AddError> {
         if self.has_code(name) {
-            return Err(AddError::TagExists(format!("Tag {name} already exists")));
+            return Err(AddError::TagExists {
+                tag: name.to_string(),
+            });
         }
         self.fingerprint_codes
             .insert(name.to_string(), fingerprint_code.to_string());

@@ -34,9 +34,9 @@ fn new_tag_requires_code() {
         .unwrap_err();
     assert_eq!(
         err,
-        AddError::MissingFingerprint(
-            "Tag pig doesn't exist; Provide a 'fingerprintCode' to add it as a tag.".to_string()
-        )
+        AddError::MissingFingerprint {
+            tag: "pig".to_string()
+        }
     );
     assert_eq!(
         err.to_string(),
@@ -77,7 +77,9 @@ fn add_tag_duplicate_errors() {
     let err = tk.add_tag("emoticon", "8").unwrap_err();
     assert_eq!(
         err,
-        AddError::TagExists("Tag emoticon already exists".to_string())
+        AddError::TagExists {
+            tag: "emoticon".to_string()
+        }
     );
     assert_eq!(err.to_string(), "Tag emoticon already exists");
 }
@@ -91,6 +93,20 @@ fn add_tag_then_fingerprint() {
     let got = pairs(&mut tk, "hi there");
     assert_eq!(got[0], ("hi".to_string(), "greeting".to_string()));
     assert_eq!(tk.get_tokens_fp(), "gw");
+}
+
+#[test]
+fn new_tag_empty_code_errors() {
+    let mut tk = Tokenizer::new();
+    let err = tk
+        .add_regex(Regex::new(r"(?i)zzz").unwrap(), "zzztag", Some(""))
+        .unwrap_err();
+    assert_eq!(
+        err,
+        AddError::MissingFingerprint {
+            tag: "zzztag".to_string()
+        }
+    );
 }
 
 #[test]
