@@ -140,6 +140,56 @@ fn hashtag_with_underscore() {
 }
 
 #[test]
+fn accented_prefix_with_possessive_tail() {
+    // A non-ASCII letter prefix joined to an ASCII possessive still splits. The
+    // end-anchored possessive match floats to the rightmost ASCII letter run.
+    let mut tk = Tokenizer::new();
+    assert_eq!(
+        pairs(&mut tk, "ëdog's"),
+        vec![
+            ("dog".to_string(), "word".to_string()),
+            ("'s".to_string(), "word".to_string()),
+        ]
+    );
+    assert_eq!(
+        pairs(&mut tk, "aëcats'"),
+        vec![
+            ("cats".to_string(), "word".to_string()),
+            ("'".to_string(), "word".to_string()),
+        ]
+    );
+}
+
+#[test]
+fn devanagari_digits_stay_out_of_latin_rules() {
+    // ASCII-only digits in the time and number rules keep Devanagari digits in
+    // the Devanagari number rule.
+    let mut tk = Tokenizer::new();
+    assert_eq!(
+        pairs(&mut tk, "१२३ hours"),
+        vec![
+            ("१२३".to_string(), "number".to_string()),
+            ("hours".to_string(), "word".to_string()),
+        ]
+    );
+    assert_eq!(
+        pairs(&mut tk, "४pm"),
+        vec![
+            ("४".to_string(), "number".to_string()),
+            ("pm".to_string(), "word".to_string()),
+        ]
+    );
+    assert_eq!(
+        pairs(&mut tk, "€1.2१२३"),
+        vec![
+            ("€".to_string(), "currency".to_string()),
+            ("1.2".to_string(), "number".to_string()),
+            ("१२३".to_string(), "number".to_string()),
+        ]
+    );
+}
+
+#[test]
 fn emoji_off_makes_alien() {
     let mut tk = Tokenizer::new();
     tk.define_config(&[("emoji", false)]);

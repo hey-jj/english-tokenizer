@@ -15,11 +15,13 @@ use regex::Regex;
 /// Whitespace run. Used to split alien text and to trim fragments.
 pub const SPACES: &str = r"\s+";
 
-/// Latin ordinals such as `1st`, `2nd`, `12th`, `33rd`.
-pub const ORDINAL_L1: &str = r"1\dth|[04-9]th|1st|2nd|3rd|[02-9]1st|[02-9]2nd|[02-9]3rd|[02-9][04-9]th|\d+\d[04-9]th|\d+\d1st|\d+\d2nd|\d+\d3rd";
+/// Latin ordinals such as `1st`, `2nd`, `12th`, `33rd`. Digits are ASCII only,
+/// so Devanagari digits route through [`NUMBER_DV`] instead.
+pub const ORDINAL_L1: &str = r"(?-u:1\dth|[04-9]th|1st|2nd|3rd|[02-9]1st|[02-9]2nd|[02-9]3rd|[02-9][04-9]th|\d+\d[04-9]th|\d+\d1st|\d+\d2nd|\d+\d3rd)";
 
 /// Latin numbers, including dates, ip addresses, and fractions via `. - / ,`.
-pub const NUMBER_L1: &str = r"\d+/\d+|\d(?:[\.,\-/]?\d)*(?:\.\d+)?";
+/// Digits are ASCII only, so Devanagari digits route through [`NUMBER_DV`].
+pub const NUMBER_L1: &str = r"(?-u:\d+/\d+|\d(?:[\.,\-/]?\d)*(?:\.\d+)?)";
 
 /// Devanagari numbers using digits U+0966 to U+096F.
 pub const NUMBER_DV: &str = r"[\x{0966}-\x{096F}]+/[\x{0966}-\x{096F}]+|[\x{0966}-\x{096F}](?:[\.,\-/]?[\x{0966}-\x{096F}])*(?:\.[\x{0966}-\x{096F}]+)?";
@@ -58,8 +60,10 @@ pub const URL: &str =
 /// including the duplicate slash.
 pub const EMOTICON: &str = r"(?i):-?[dps*/\[\]{}()]|;-?[/()d]|<3";
 
-/// Times such as `4pm`, `3pm`, `16:00 hours`.
-pub const TIME: &str = r"(?i)(?:\d|[01]\d|2[0-3]):?(?:[0-5][0-9])?\s?(?:[ap]\.?m\.?|hours|hrs)";
+/// Times such as `4pm`, `3pm`, `16:00 hours`. The hour and minute digits are
+/// ASCII only, so a Devanagari digit does not start a time match.
+pub const TIME: &str =
+    r"(?i)(?:(?-u:\d)|[01](?-u:\d)|2[0-3]):?(?:[0-5][0-9])?\s?(?:[ap]\.?m\.?|hours|hrs)";
 
 /// Latin word block. Allows an internal or trailing ASCII apostrophe so
 /// contractions stay whole for later splitting.
@@ -72,11 +76,12 @@ pub const WORD_DV: &str = r"(?i)[\x{0900}-\x{094F}\x{0951}-\x{0963}\x{0970}-\x{0
 /// Symbols, including Om at U+0950.
 pub const SYMBOL: &str = r"[\x{0950}~@#%\^\+=\*\|/<>&]";
 
-/// Singular possessive, for example `dog's` to `dog` and `'s`.
-pub const POS_SINGULAR: &str = r"(?i)^([a-z]+)('s)$";
+/// Singular possessive, for example `dog's` to `dog` and `'s`. End anchored
+/// only. The match floats to the rightmost ASCII letter run before `'s`.
+pub const POS_SINGULAR: &str = r"(?i)([a-z]+)('s)$";
 
-/// Plural possessive, for example `cats'` to `cats` and `'`.
-pub const POS_PLURAL: &str = r"(?i)^([a-z]+s)(')$";
+/// Plural possessive, for example `cats'` to `cats` and `'`. End anchored only.
+pub const POS_PLURAL: &str = r"(?i)([a-z]+s)(')$";
 
 /// The token category names. These are the exact tag strings.
 pub const QUOTED_PHRASE_CAT: &str = "quoted_phrase";
