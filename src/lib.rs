@@ -334,13 +334,17 @@ impl Tokenizer {
     ///
     /// The rule is tried before every built-in rule. If `tag` is already known,
     /// `fingerprint_code` is ignored. If `tag` is new, `fingerprint_code` must be
-    /// provided so the tag has a fingerprint. A later
+    /// a non-empty string so the tag has a fingerprint. A later
     /// [`define_config`](Self::define_config) call removes added rules.
+    ///
+    /// Write the pattern with non-capturing groups `(?:...)`. Matching takes the
+    /// whole match and the text between matches. A capturing group does not
+    /// inject its capture as an extra token.
     ///
     /// # Errors
     ///
-    /// Returns [`AddError::MissingFingerprint`] when `tag` is new and no
-    /// fingerprint code is given.
+    /// Returns [`AddError::MissingFingerprint`] when `tag` is new and the
+    /// fingerprint code is missing or empty.
     ///
     /// # Example
     ///

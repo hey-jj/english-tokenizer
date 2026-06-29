@@ -110,6 +110,24 @@ fn new_tag_empty_code_errors() {
 }
 
 #[test]
+fn capturing_group_does_not_inject_token() {
+    // A user regex with a capturing group emits only the whole match, not the
+    // capture. `3x` becomes one number token, not `3x` plus `3`.
+    let mut tk = Tokenizer::new();
+    tk.add_regex(Regex::new(r"(?i)(\d)x").unwrap(), "number", None)
+        .unwrap();
+    let got = pairs(&mut tk, "a 3x b");
+    assert_eq!(
+        got,
+        vec![
+            ("a".to_string(), "word".to_string()),
+            ("3x".to_string(), "number".to_string()),
+            ("b".to_string(), "word".to_string()),
+        ]
+    );
+}
+
+#[test]
 fn tokenizer_implements_debug() {
     let tk = Tokenizer::new();
     let shown = format!("{tk:?}");
