@@ -110,8 +110,8 @@ fn default_fingerprint_codes() -> HashMap<String, String> {
         .collect()
 }
 
-/// One token result of [`tokenizeTextUnit`]: either a finished token or a raw
-/// fragment that needs more tokenizing.
+/// One result of [`tokenize_unit`](Tokenizer::tokenize_unit): either a finished
+/// token or a raw fragment that needs more tokenizing.
 enum Unit {
     /// A finished token.
     Token(Token),
@@ -122,13 +122,10 @@ enum Unit {
 /// A regex tokenizer instance.
 ///
 /// Each instance holds its own rule list, fingerprint codes, and the result of
-/// the last tokenize call. Create one with [`Tokenizer::new`].
-///
-/// The source library keeps fingerprint codes in a process wide variable shared
-/// across instances. This type keeps them per instance instead. Most code uses a
-/// single instance, so the behavior matches. The difference shows only when two
-/// instances run in the same process and one adds a tag the other reads before
-/// any reset.
+/// the last tokenize call. Fingerprint codes are per instance. A
+/// [`define_config`](Self::define_config) call resets them. Create an instance
+/// with [`Tokenizer::new`].
+#[derive(Debug)]
 pub struct Tokenizer {
     master: Vec<Rule>,
     rgxs: Vec<Rule>,

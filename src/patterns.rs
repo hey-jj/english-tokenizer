@@ -113,7 +113,7 @@ pub const PUNCTUATION_CAT: &str = "punctuation";
 pub const SYMBOL_CAT: &str = "symbol";
 
 /// One compiled pattern paired with the category it tags.
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Rule {
     /// Compiled matcher for this token kind.
     pub regex: Regex,

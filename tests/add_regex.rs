@@ -92,3 +92,10 @@ fn add_tag_then_fingerprint() {
     assert_eq!(got[0], ("hi".to_string(), "greeting".to_string()));
     assert_eq!(tk.get_tokens_fp(), "gw");
 }
+
+#[test]
+fn tokenizer_implements_debug() {
+    let tk = Tokenizer::new();
+    let shown = format!("{tk:?}");
+    assert!(shown.contains("Tokenizer"));
+}
