@@ -43,6 +43,9 @@ tk.define_config(&[("hashtag", false)]); // returns 13
 
 An empty config splits on spaces and tags everything `alien`.
 
+The `tags` module holds the built-in tag names as constants. Use `tags::HASHTAG`
+in place of the `"hashtag"` literal so a typo fails to compile.
+
 ### Custom rules
 
 `add_regex` injects a rule that wins over the built-ins. `add_tag` registers a

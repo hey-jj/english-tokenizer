@@ -45,6 +45,56 @@ use std::collections::HashMap;
 
 use patterns::Rule;
 
+/// Built-in token tag names.
+///
+/// Use these constants instead of typing the string literals. A misspelled
+/// constant fails to compile. A misspelled literal compiles and silently
+/// matches nothing.
+///
+/// ```
+/// use english_tokenizer::{tags, Tokenizer};
+///
+/// let mut tk = Tokenizer::new();
+/// let tokens = tk.tokenize("hello");
+/// assert_eq!(tokens[0].tag, tags::WORD);
+///
+/// tk.define_config(&[(tags::HASHTAG, false)]);
+/// ```
+pub mod tags {
+    use crate::patterns;
+
+    /// `word`: a Latin or Devanagari word.
+    pub const WORD: &str = patterns::WORD_CAT;
+    /// `number`: an integer, decimal, fraction, or dotted run of digits.
+    pub const NUMBER: &str = patterns::NUMBER_CAT;
+    /// `ordinal`: an ordinal such as `1st` or `12th`.
+    pub const ORDINAL: &str = patterns::ORDINAL_CAT;
+    /// `email`: an email address.
+    pub const EMAIL: &str = patterns::EMAIL_CAT;
+    /// `url`: an http or https URL.
+    pub const URL: &str = patterns::URL_CAT;
+    /// `mention`: an `@name` mention.
+    pub const MENTION: &str = patterns::MENTION_CAT;
+    /// `hashtag`: a `#tag` hashtag.
+    pub const HASHTAG: &str = patterns::HASHTAG_CAT;
+    /// `emoji`: a unicode emoji.
+    pub const EMOJI: &str = patterns::EMOJI_CAT;
+    /// `emoticon`: a text emoticon such as `:-)`.
+    pub const EMOTICON: &str = patterns::EMOTICON_CAT;
+    /// `time`: a clock time such as `4pm` or `16:00 hours`.
+    pub const TIME: &str = patterns::TIME_CAT;
+    /// `currency`: a currency symbol.
+    pub const CURRENCY: &str = patterns::CURRENCY_CAT;
+    /// `quoted_phrase`: a double quoted span. Off by default.
+    pub const QUOTED_PHRASE: &str = patterns::QUOTED_PHRASE_CAT;
+    /// `punctuation`: a punctuation mark.
+    pub const PUNCTUATION: &str = patterns::PUNCTUATION_CAT;
+    /// `symbol`: a standalone symbol.
+    pub const SYMBOL: &str = patterns::SYMBOL_CAT;
+    /// `alien`: text that no active rule matched.
+    pub const ALIEN: &str = "alien";
+}
+
 /// A single token: its text and its type tag.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Token {
