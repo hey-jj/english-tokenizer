@@ -250,7 +250,7 @@ pub fn lookup(word: &str) -> Option<&'static [&'static str]> {
         "THAT'RE" => Some(&["THAT", "'RE"]),
         "That're" => Some(&["That", "'re"]),
         "let's" => Some(&["let", "'s"]),
-        "LET'S" => Some(&["THAT", "'S"]),
+        "LET'S" => Some(&["LET", "'S"]),
         "Let's" => Some(&["Let", "'s"]),
         "could've" => Some(&["could", "'ve"]),
         "COULD'VE" => Some(&["COULD", "'VE"]),

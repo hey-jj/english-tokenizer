@@ -44,13 +44,13 @@ fn contraction_case_variants() {
 }
 
 #[test]
-fn let_s_uppercase_data_quirk() {
-    // The uppercase let's maps to a quirky first piece in the source table.
+fn let_s_uppercase_splits_to_let() {
+    // Uppercase LET'S splits to LET, matching the lower and title case forms.
     let mut tk = Tokenizer::new();
     assert_eq!(
         pairs(&mut tk, "LET'S"),
         vec![
-            ("THAT".to_string(), "word".to_string()),
+            ("LET".to_string(), "word".to_string()),
             ("'S".to_string(), "word".to_string()),
         ]
     );
