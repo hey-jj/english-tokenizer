@@ -76,12 +76,13 @@ pub const WORD_DV: &str = r"(?i)[\x{0900}-\x{094F}\x{0951}-\x{0963}\x{0970}-\x{0
 /// Symbols, including Om at U+0950.
 pub const SYMBOL: &str = r"[\x{0950}~@#%\^\+=\*\|/<>&]";
 
-/// Singular possessive, for example `dog's` to `dog` and `'s`. End anchored
-/// only. The match floats to the rightmost ASCII letter run before `'s`.
-pub const POS_SINGULAR: &str = r"(?i)([a-z]+)('s)$";
+/// Singular possessive, for example `dog's` to `dog` and `'s`. Anchored at both
+/// ends so a non-ASCII prefix keeps the word whole instead of dropping it.
+pub const POS_SINGULAR: &str = r"(?i)^([a-z]+)('s)$";
 
-/// Plural possessive, for example `cats'` to `cats` and `'`. End anchored only.
-pub const POS_PLURAL: &str = r"(?i)([a-z]+s)(')$";
+/// Plural possessive, for example `cats'` to `cats` and `'`. Anchored at both
+/// ends, matching [`POS_SINGULAR`].
+pub const POS_PLURAL: &str = r"(?i)^([a-z]+s)(')$";
 
 /// The token category names. These are the exact tag strings.
 pub const QUOTED_PHRASE_CAT: &str = "quoted_phrase";

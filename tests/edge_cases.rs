@@ -141,22 +141,16 @@ fn hashtag_with_underscore() {
 
 #[test]
 fn accented_prefix_with_possessive_tail() {
-    // A non-ASCII letter prefix joined to an ASCII possessive still splits. The
-    // end-anchored possessive match floats to the rightmost ASCII letter run.
+    // A non-ASCII letter prefix means the possessive split does not fire, so the
+    // word stays whole and no leading characters are dropped.
     let mut tk = Tokenizer::new();
     assert_eq!(
         pairs(&mut tk, "ëdog's"),
-        vec![
-            ("dog".to_string(), "word".to_string()),
-            ("'s".to_string(), "word".to_string()),
-        ]
+        vec![("ëdog's".to_string(), "word".to_string())]
     );
     assert_eq!(
         pairs(&mut tk, "aëcats'"),
-        vec![
-            ("cats".to_string(), "word".to_string()),
-            ("'".to_string(), "word".to_string()),
-        ]
+        vec![("aëcats'".to_string(), "word".to_string())]
     );
 }
 
