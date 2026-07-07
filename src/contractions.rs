@@ -16,6 +16,7 @@ pub fn lookup(word: &str) -> Option<&'static [&'static str]> {
         "can't" => Some(&["ca", "n't"]),
         "CAN'T" => Some(&["CA", "N'T"]),
         "Can't" => Some(&["Ca", "n't"]),
+        "couldn't" => Some(&["could", "n't"]),
         "Couldn't" => Some(&["Could", "n't"]),
         "COULDN'T" => Some(&["COULD", "N'T"]),
         "don't" => Some(&["do", "n't"]),
@@ -314,4 +315,4 @@ pub fn lookup(word: &str) -> Option<&'static [&'static str]> {
 }
 
 /// Number of distinct contraction keys in the table.
-pub const COUNT: usize = 296;
+pub const COUNT: usize = 297;

@@ -12,7 +12,7 @@ fn pairs(tk: &mut Tokenizer, input: &str) -> Vec<(String, String)> {
 
 #[test]
 fn table_size() {
-    assert_eq!(CONTRACTION_COUNT, 296);
+    assert_eq!(CONTRACTION_COUNT, 297);
 }
 
 #[test]
@@ -22,6 +22,18 @@ fn two_part_split() {
         pairs(&mut tk, "won't"),
         vec![
             ("wo".to_string(), "word".to_string()),
+            ("n't".to_string(), "word".to_string()),
+        ]
+    );
+}
+
+#[test]
+fn lowercase_couldnt_splits() {
+    let mut tk = Tokenizer::new();
+    assert_eq!(
+        pairs(&mut tk, "couldn't"),
+        vec![
+            ("could".to_string(), "word".to_string()),
             ("n't".to_string(), "word".to_string()),
         ]
     );
