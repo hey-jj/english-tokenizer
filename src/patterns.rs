@@ -17,7 +17,7 @@ pub const SPACES: &str = r"\s+";
 
 /// Latin ordinals such as `1st`, `2nd`, `12th`, `33rd`. Digits are ASCII only,
 /// so Devanagari digits route through [`NUMBER_DV`] instead.
-pub const ORDINAL_L1: &str = r"(?-u:1\dth|[04-9]th|1st|2nd|3rd|[02-9]1st|[02-9]2nd|[02-9]3rd|[02-9][04-9]th|\d+\d[04-9]th|\d+\d1st|\d+\d2nd|\d+\d3rd)";
+pub const ORDINAL_L1: &str = r"(?-u:\d*1\dth|[04-9]th|1st|2nd|3rd|[02-9]1st|[02-9]2nd|[02-9]3rd|[02-9][04-9]th|\d+\d[04-9]th|\d+\d1st|\d+\d2nd|\d+\d3rd)";
 
 /// Latin numbers, including dates, ip addresses, and fractions via `. - / ,`.
 /// Digits are ASCII only, so Devanagari digits route through [`NUMBER_DV`].
