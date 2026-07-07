@@ -85,6 +85,18 @@ fn add_tag_duplicate_errors() {
 }
 
 #[test]
+fn add_tag_empty_code_errors() {
+    let mut tk = Tokenizer::new();
+    let err = tk.add_tag("blank", "").unwrap_err();
+    assert_eq!(
+        err,
+        AddError::MissingFingerprint {
+            tag: "blank".to_string()
+        }
+    );
+}
+
+#[test]
 fn add_tag_then_fingerprint() {
     let mut tk = Tokenizer::new();
     tk.add_tag("greeting", "g").unwrap();
@@ -107,6 +119,23 @@ fn new_tag_empty_code_errors() {
             tag: "zzztag".to_string()
         }
     );
+}
+
+#[test]
+fn built_in_tag_without_code_needs_no_code() {
+    let mut tk = Tokenizer::new();
+    tk.add_regex(Regex::new(r"--").unwrap(), "punctuation", None)
+        .unwrap();
+    let got = pairs(&mut tk, "a -- b");
+    assert_eq!(
+        got,
+        vec![
+            ("a".to_string(), "word".to_string()),
+            ("--".to_string(), "punctuation".to_string()),
+            ("b".to_string(), "word".to_string()),
+        ]
+    );
+    assert_eq!(tk.get_tokens_fp(), "w--w");
 }
 
 #[test]

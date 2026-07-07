@@ -362,7 +362,7 @@ impl Tokenizer {
         tag: &str,
         fingerprint_code: Option<&str>,
     ) -> Result<(), AddError> {
-        let known = self.has_code(tag);
+        let known = self.has_code(tag) || self.has_category(tag);
         // An empty code counts as no code, matching `has_code`. A new tag needs
         // a non-empty code to register.
         let code_present = fingerprint_code.is_some_and(|c| !c.is_empty());
@@ -389,9 +389,15 @@ impl Tokenizer {
     ///
     /// # Errors
     ///
-    /// Returns [`AddError::TagExists`] when `name` already has a code.
+    /// Returns [`AddError::MissingFingerprint`] when `fingerprint_code` is
+    /// empty. Returns [`AddError::TagExists`] when `name` already has a code.
     pub fn add_tag(&mut self, name: &str, fingerprint_code: &str) -> Result<(), AddError> {
-        if self.has_code(name) {
+        if fingerprint_code.is_empty() {
+            return Err(AddError::MissingFingerprint {
+                tag: name.to_string(),
+            });
+        }
+        if self.fingerprint_codes.contains_key(name) {
             return Err(AddError::TagExists {
                 tag: name.to_string(),
             });
@@ -409,6 +415,10 @@ impl Tokenizer {
             .is_some_and(|c| !c.is_empty())
     }
 
+    fn has_category(&self, tag: &str) -> bool {
+        self.master.iter().any(|rule| rule.category == tag)
+    }
+
     /// Recursively tokenizes `text`. Each level applies the first rule, emits its
     /// matches as final tokens, and recurses on the gaps with the rest of the
     /// rules. With no rules left, splits on whitespace and tags every piece
@@ -416,8 +426,7 @@ impl Tokenizer {
     fn tokenize_recursive(&mut self, text: &str, rules: &[Rule]) {
         if rules.is_empty() {
             for piece in self.spaces.split(text) {
-                self.final_tokens
-                    .push(Token::new(piece.trim().to_string(), "alien"));
+                self.final_tokens.push(Token::new(piece, "alien"));
             }
             return;
         }
