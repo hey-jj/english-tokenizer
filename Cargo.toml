@@ -1,6 +1,6 @@
 [package]
 name = "english-tokenizer"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 description = "Regex-driven tokenizer that splits a sentence and type-tags each token (word, number, emoji, url, email, hashtag, mention, time, currency, and more)."
 license = "MIT"
